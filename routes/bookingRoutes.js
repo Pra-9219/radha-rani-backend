@@ -4,15 +4,25 @@ const Booking = require("../models/Booking");
 
 // CREATE booking
 router.post("/", async (req, res) => {
-  const booking = new Booking(req.body);
-  await booking.save();
-  res.json(booking);
+  try {
+    const booking = new Booking(req.body);
+    await booking.save();
+    res.json(booking);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error saving booking");
+  }
 });
 
 // GET all bookings
 router.get("/", async (req, res) => {
-  const bookings = await Booking.find();
-  res.json(bookings);
+  try {
+    const bookings = await Booking.find();
+    res.json(bookings);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
 });
 
 // DELETE booking ❌

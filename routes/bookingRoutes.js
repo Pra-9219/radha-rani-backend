@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Booking = require("../models/Booking");
 
-// CREATE booking
+// ✅ CREATE booking
 router.post("/", async (req, res) => {
   try {
     const booking = new Booking(req.body);
@@ -10,41 +10,51 @@ router.post("/", async (req, res) => {
     res.json(booking);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error saving booking");
+    res.status(500).json({ message: error.message });
   }
 });
 
-// GET all bookings
+// ✅ GET all bookings
 router.get("/", async (req, res) => {
   try {
     const bookings = await Booking.find();
     res.json(bookings);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: error.message });
   }
 });
 
-// DELETE booking ❌
+// ✅ DELETE booking
 router.delete("/:id", async (req, res) => {
-  await Booking.findByIdAndDelete(req.params.id);
-  res.json({ message: "Deleted successfully" });
+  try {
+    await Booking.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
 });
 
-// UPDATE booking
+// ✅ UPDATE booking
 router.put("/:id", async (req, res) => {
-  const booking = await Booking.findById(req.params.id);
+  try {
+    const booking = await Booking.findById(req.params.id);
 
-  if (!booking) {
-    return res.status(404).json({ message: "Not found" });
+    if (!booking) {
+      return res.status(404).json({ message: "Not found" });
+    }
+
+    booking.status =
+      booking.status === "pending" ? "confirmed" : "pending";
+
+    await booking.save();
+    res.json(booking);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
-
-  booking.status =
-    booking.status === "pending" ? "confirmed" : "pending";
-
-  await booking.save();
-
-  res.json(booking);
 });
 
 module.exports = router;

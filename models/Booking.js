@@ -1,16 +1,33 @@
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
-  name: String,
-  phone: String,
-  eventType: String,
-  date: String,
-  location: String,
-  message: String,
+  name: {
+    type: String,
+    required: true
+  },
+  phone: {
+    type: String,
+    required: true
+  },
+  eventType: {
+    type: String,
+    required: true
+  },
+  date: {
+    type: String,
+    required: true
+  },
+  location: {
+    type: String,
+    required: true
+  },
+  message: {
+    type: String
+  },
   status: {
     type: String,
-    default: "pending",
-  },
-});
+    default: "pending"
+  }
+}, { timestamps: true });
 
 module.exports = mongoose.model("Booking", bookingSchema);
